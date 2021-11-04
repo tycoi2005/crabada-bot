@@ -1,0 +1,19 @@
+{
+  "name": "crabada-bot",
+  "version": "1.0.0",
+  "description": "crabada simple price bot",
+  "main": "index.js",
+  "author": "jaken",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "export $(cat .env | xargs) && node index.js",
+    "set_env": "export $(cat .env | xargs)"
+  },
+  "dependencies": {
+    "@defi.org/web3-candies": "^2.2.10",
+    "express": "^4.17.1",
+    "joe-api": "github:tycoi2005/joe-api",
+    "node-telegram-bot-api": "^0.54.0"
+  }
+}
