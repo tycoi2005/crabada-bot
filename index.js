@@ -15,6 +15,7 @@ const ticker = process.env.TOKEN_TICKER;
 const contract = process.env.TOKEN_CONTRACT;
 const pairAddress = process.env.LIQUIDITY_CONTRACT;
 const token2_contract = process.env.TOKEN2_CONTRACT;
+const tus_contract = process.env.TUS_TOKEN_CONTRACT;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
@@ -95,6 +96,38 @@ bot.onText(/\/price/, (msg) => {
         let price_avax = token_pricewavax.toFixed(Config.digits);
 
         let msg_string = "$CRA: $" + price_usd +"\n" + price_avax+" $CRA/$AVAX";
+
+        bot.sendMessage(chatId, msg_string);
+      })
+  } catch (error) {
+    console.log(error)
+  }
+  // send back the matched "whatever" to the chat
+  
+});
+
+// Matches "/tusprice [whatever]"
+bot.onText(/\/tusprice/, (msg) => {
+  // 'msg' is the received Message from Telegram
+  // 'match' is the result of executing the regexp above on the text content
+  // of the message
+
+  const chatId = msg.chat.id;
+  const token = ticker;
+  const token_contract = tus_contract;
+  // log
+  console.log("command tusprice on chat id:", chatId, ". contract:", token_contract)
+  try{
+    let wavax_price = 1;
+    price.getPrice(WAVAX_ADDRESS).then(rs=>{
+      wavax_price = rs;
+      return price.getPrice(token_contract);
+    }).then((token_price)=>{
+        let token_pricewavax = token_price/wavax_price;
+        let price_usd = parseFloat(Web3Candies.fmt18(token_price)).toFixed(Config.digits);
+        let price_avax = token_pricewavax.toFixed(Config.digits);
+
+        let msg_string = "$TUS: $" + price_usd +"\n" + price_avax+" $TUS/$AVAX";
 
         bot.sendMessage(chatId, msg_string);
       })
