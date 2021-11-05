@@ -1,11 +1,12 @@
 Crabada bot commands:
-/price : return the current price of $crab.
-/about : return the current price of $crab, the market cap, the circulating supply and the total value locked.
-/crabemo : return a random crabada emoj
-/tokenomics : return Crabada's tokenomics page.
-/contracts : return Crabada's contracts page.
-/docs : return Crabada's docs page.
-/discord : return Crabada's discord.
-/twitter : return Crabada's twitter.
-/website : return Crabada's website.
-/help : show all commands.
+price - return the current price of $crab.
+tusprice - return the current price of $tus.
+about - return the current price of $crab, the market cap, the circulating supply and the total value locked.
+crabemo - return a random crabada emoj
+tokenomics - return Crabada's tokenomics page.
+contracts - return Crabada's contracts page.
+docs - return Crabada's docs page.
+discord - return Crabada's discord.
+twitter - return Crabada's twitter.
+website - return Crabada's website.
+help - show all commands.
