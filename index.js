@@ -19,6 +19,13 @@ const tus_contract = process.env.TUS_TOKEN_CONTRACT;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
+// Create our number formatter.
+const number_formatter = new Intl.NumberFormat('en-US', {
+  // These options are needed to round to whole numbers if that's what you want.
+  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+  maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+});
+
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {
   // 'msg' is the received Message from Telegram
@@ -154,27 +161,20 @@ bot.onText(/\/about/, (msg) => {
     let token_balance = 0;
     let msg_string = null;
     let price_usd = 1;
-    supply.getMaxSupply(token_contract).then(rs=>{
-      max_supply = parseFloat(Web3Candies.fmt18(rs)).toFixed(Config.digits);
-      return supply.getCirculatingSupply(token_contract);
-    }).then(rs=>{
-      circ_supply = parseFloat(Web3Candies.fmt18(rs)).toFixed(Config.digits);
-      return price.getPrice(token_contract);
-    }).then((rs)=>{
+    let max_supply = 1000000000;
+    price.getPrice(token_contract).then((rs)=>{
         price_usd = parseFloat(Web3Candies.fmt18(rs)).toFixed(Config.digits);
-        let market_cap = circ_supply * price_usd;
+        let market_cap = max_supply * price_usd;
         let full_diluted_market_cap = max_supply * price_usd;
         msg_string = "$CRA: $" + price_usd 
-                          + "\nMarket Cap: $" + market_cap
-                          + "\nFully Diluted Market Cap: $" + full_diluted_market_cap
-                          + "\nCirc. Supply: " + circ_supply
-                          + "\nMax Supply: " + max_supply
+                          + "\nMarket Cap: $" + number_formatter.format(market_cap) 
+                          + "\nTotal Supply: " + number_formatter.format(max_supply)
         if(!pairAddress) return {reserveToken0:0, reserveToken1:0};
         return price.getReserves(token_contract,token2_contract, pairAddress)
       }).then(rs=>{
         token_balance = rs.reserveToken0;
         let balance_value = (token_balance * price_usd * 2/1e18).toFixed(Config.digits);
-        msg_string += "\nJoe Liquidity: $" + balance_value;
+        msg_string += "\nJoe Liquidity: $" + number_formatter.format(balance_value);
         bot.sendMessage(chatId, msg_string);
       })
   } catch (error) {
@@ -183,14 +183,3 @@ bot.onText(/\/about/, (msg) => {
   // send back the matched "whatever" to the chat
   
 });
-
-// Listen for any kind of message. There are different kinds of
-// messages.
-
-// bot.on('message', (msg) => {
-//   const chatId = msg.chat.id;
-
-//   // send a message to the chat acknowledging receipt of their message
-//   console.log("sticker", msg.sticker?.file_id)
-//   bot.sendMessage(chatId, 'Received your msg:', msg);
-// });
